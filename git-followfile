@@ -1,0 +1,30 @@
+#!/bin/bash -el
+
+
+FILE=$1
+
+if [[ "${FILE}" == "" ]]; then
+	echo "Usage: git followfile path/to/file"
+	exit 1
+fi
+
+if [[ ! -f "${FILE}" ]]; then
+	echo "File ${FILE} not found" >&2
+	exit 1
+fi
+
+git log --reverse --pretty=format:'%H' -- "${FILE}" | while read commit; do
+    git checkout $commit
+    # Any operation you want to perform on the checked out state.
+    # For example, analyze the file, copy it somewhere, etc.
+
+    echo "Press 'n' and Enter to continue to the next commit..."
+    read input < /dev/tty
+
+    # Wait for the user to press 'n' and Enter
+    while [ "$input" != "n" ]; do
+        echo "Press 'n' and Enter to continue to the next commit..."
+        read input < /dev/tty
+    done
+
+done
